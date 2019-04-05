@@ -6,13 +6,10 @@ const question = require("./question");
 const express = require('express');
 const router = express.Router();
 
-router.use('/current/answer', answer);
-router.use('/current/question', question);
+router.use('/', answer);
+router.use('/', question);
 
-router.post ("/", asyncHandler( async (req, res) => {
-	if (!req.params.gameId) {
-		throw "No game ID specified";
-	}
+router.post ("/:gameId/round/", asyncHandler( async (req, res) => {
 	let game = gameExists (req.params.gameId)
 	if (game.teams.length > 1) {
 		let round = {
@@ -37,21 +34,15 @@ router.post ("/", asyncHandler( async (req, res) => {
 	});
 }));
 
-router.get ("/current", asyncHandler( async (req, res) => {
-    if (!req.params.gameId) {
-        throw "No game ID specified";
-    } else {
-        let game = await gameExists (req.params.gameId);
-        await res.json ({
-            activeRound: game.activeRound
-        });
-    }
+router.get ("/:gameId/round/current", asyncHandler( async (req, res) => {
+    let game = await gameExists (req.params.gameId);
+    await res.json ({
+        activeRound: game.activeRound
+    });
 }));
 
-router.put ("/current", asyncHandler( async (req, res) => {
-    if (!req.params.gameId) {
-        throw "No game ID specified";
-    } else if (!req.body.nextQuestion) {
+router.put ("/:gameId/round/current", asyncHandler( async (req, res) => {
+    if (!req.body.nextQuestion) {
         throw "No question or close flag specified";
     }
     let game = await gameExists (req.params.gameId);
@@ -85,4 +76,5 @@ router.put ("/current", asyncHandler( async (req, res) => {
         error: null
     });
 }));
+
 module.exports = router ;

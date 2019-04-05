@@ -1,11 +1,10 @@
-let gameExists = require ("../../../../../functions/gameExists.js");
-let teams = require ("../../../../../schema/teams.js").model;
+let gameExists = require ("../utils/gameExists");
+let teams = require ("../schema/teams").model;
 const asyncHandler = require('express-async-handler');
+const express = require('express');
+const router = express.Router();
 
-app.post ("/", asyncHandler( async (req, res) => {
-    if (!req.params.gameId) {
-        throw "No gameID specified";
-    } 
+router.post ("/:gameId/team/", asyncHandler( async (req, res) => {
     if (!req.body.name || req.body.name === "") {
         throw "No name specified";
     } 
@@ -14,6 +13,7 @@ app.post ("/", asyncHandler( async (req, res) => {
         appliedGame: req.params.gameId
     });
     const game = await gameExists (req.params.gameId);
+    
     for (let elem of game.teams) {
         if (req.body.name === elem.name) {
             throw "Team has already been accepted into the game";
@@ -33,12 +33,9 @@ app.post ("/", asyncHandler( async (req, res) => {
     // ws implemtation
 }));
 
-app.get ("/", asyncHandler( async (req, res) => {
-    if (!req.params.gameId) {
-        throw "No gameID specified";
-    }
+router.get ("/:gameId/team/", asyncHandler( async (req, res) => {
     let entries = [];
-    const result = await teams.find ({appliedGame: req.params.gameId})
+    const result = await teams.find ({appliedGame: req.params.gameId});
     if (result) {
         for (let i = 0; i < result.length; i++) {
             let entry = result [i].toObject ();
@@ -48,8 +45,12 @@ app.get ("/", asyncHandler( async (req, res) => {
             entries.push (entry);
         }
     }
-    
-    let game = gameExists (req.params.gameId);
+
+    if (entries.length <= 0) {
+        throw "No teams have applied yet";
+    }
+
+    const game = await gameExists (req.params.gameId);
     for (let elem of game.teams) {
         let entry = elem.toObject ();
         delete entry.__v;
@@ -57,20 +58,12 @@ app.get ("/", asyncHandler( async (req, res) => {
         entry.approved = true;
         entries.push (entry);
     }
-    if (entries.length < 0) {
-        throw "No teams have applied yet";
-    }
+    
     res.json (entries);
 
 }));
 
-app.put ("/:teamId", asyncHandler( async (req, res) => {
-    if (!req.params.gameId) {
-        throw "No game ID specified";
-    }
-    if (!req.params.teamId) {
-        throw "No team ID specified";
-    } 
+router.put ("/:gameId/team/:teamId", asyncHandler( async (req, res) => {
     if (!req.body.hasOwnProperty ('approved')) {
         throw "No approved flag specified";
     } else if (req.body.approved) {
@@ -119,14 +112,7 @@ app.put ("/:teamId", asyncHandler( async (req, res) => {
     }
 }));
 
-app.get ("/:teamId", asyncHandler( async (req, res) => {
-    if (!req.params.gameId) {
-        throw "No game ID specified";
-    } 
-    if (!req.params.teamId) {
-        throw "No team ID specified";
-
-    } 
+router.get ("/:gameId/team/:teamId", asyncHandler( async (req, res) => {
     const game = await gameExists (req.params.gameId);
     let approved = false;
     for (elem of game.teams) {
@@ -138,3 +124,5 @@ app.get ("/:teamId", asyncHandler( async (req, res) => {
         approved: approved
     });
 }));
+
+module.exports = router ;

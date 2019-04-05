@@ -4,10 +4,7 @@ const questions = require ("../schema/questions").model;
 const express = require('express');
 const router = express.Router();
 
-router.put ("/current", asyncHandler( async (req, res) => {
-    if (!req.params.gameId) {
-        throw "No game ID specified";
-    }
+router.put ("/:gameId/round/current/answer/current", asyncHandler( async (req, res) => {
     if (req.body.team && (req.body.hasOwnProperty ("correct")||req.body.answer)) {
         let game = await gameExists (req.params.gameId);
         let roundId = game.activeRound;
@@ -44,10 +41,7 @@ router.put ("/current", asyncHandler( async (req, res) => {
     }
 }));
 
-router.get ("/current", asyncHandler( async (req, res) => {
-    if (!req.params.gameId) {
-        throw "No game ID specified";
-    }
+router.get ("/:gameId/round/current/answer/current", asyncHandler( async (req, res) => {
     let game = await gameExists (req.params.gameId);
     let roundId = game.activeRound;
 

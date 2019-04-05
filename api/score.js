@@ -5,9 +5,6 @@ const express = require('express');
 const router = express.Router();
 
 router.get ("/", asyncHandler( async (req, res) => {
-    if (!req.params.gameId) {
-        throw "No gameID specified";
-    }
     const game = await gameExists (req.params.gameId, true);
     let result = {};
     let round = null;
@@ -68,4 +65,5 @@ router.get ("/", asyncHandler( async (req, res) => {
     }
 
 }));
+
 module.exports = router;

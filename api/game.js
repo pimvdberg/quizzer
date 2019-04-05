@@ -7,7 +7,9 @@ const express = require('express');
 const router = express.Router();
 
 const round = require("./round");
-router.use('/:gameId/round', round);
+const team = require("./team");
+router.use('/', round);
+router.use('/', team);
 
 router.post ("/", asyncHandler( async (req, res) => {
 	let password;
@@ -29,9 +31,7 @@ router.post ("/", asyncHandler( async (req, res) => {
 
 router.put ("/:gameId", asyncHandler( async (req, res) => {
 	if (!req.body.hasOwnProperty ('closed')) {
-		throw "No closed flag specified";
-	} else if (!req.params.gameId) {
-        throw "No game ID specified";
+        throw "No closed flag specified";
     }
     let game = await gameExists (req.params.gameId);
     if (req.body.closed) {
@@ -59,15 +59,11 @@ router.put ("/:gameId", asyncHandler( async (req, res) => {
 
 
 router.get ("/:gameId/exists", asyncHandler( async (req, res) => {
-    if (!req.params.gameId) {
-        throw "No game ID specified";
-    } else {
-        const game = await gameExists(req.params.gameId);
-        console.log(game);
-        res.send ({
-            success: true,
-            error: null
-        });
-    }
+    const game = await gameExists(req.params.gameId);
+    res.send ({
+        success: true,
+        error: null
+    });
 }));
+
 module.exports = router ;
