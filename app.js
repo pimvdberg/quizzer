@@ -28,10 +28,13 @@ app.use (express.static (path.join (__dirname, "./public")));
 app.use ("*", (req, res) => {
 	res.sendFile (path.join (__dirname, "./public/index.html"));
 });
-app.use((err, req, res, next) => res.status(500).send(JSON.stringify({succes:false, err: err.message})));
-
-
-
-
+app.use((err, req, res, next) => {
+	console.log(err);
+	res.status(500).send(
+		JSON.stringify(
+			{succes:false, err: err}
+		)
+	);
+});
 
 server.listen (port, () => console.log (`Server listening on port ${port}`));

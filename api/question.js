@@ -88,7 +88,7 @@ router.get ("/", asyncHandler( async (req, res) => {
 
 router.get ("/current", asyncHandler( async (req, res) => {
     if (!req.params.gameId) {
-        throw "No game ID specified"
+        throw "No game ID specified";
     }
     const game = await gameExists (req.params.gameId);
     let roundId = game.activeRound;

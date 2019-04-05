@@ -16,7 +16,7 @@ router.post ("/", asyncHandler( async (req, res) => {
 		if (result) {
 			throw "Game already exists";
 		}
-	})
+	});
 	const game = new games ({_id: password});
 	await game.save();
 	await res.json ({
@@ -62,14 +62,12 @@ router.get ("/:gameId/exists", asyncHandler( async (req, res) => {
     if (!req.params.gameId) {
         throw "No game ID specified";
     } else {
-        if(!await gameExists (req.params.gameId)){
-            throw "Game does not exists";
-        } else {
-            res.send ({
-                success: true,
-                error: null
-            });
-        }
+        const game = await gameExists(req.params.gameId);
+        console.log(game);
+        res.send ({
+            success: true,
+            error: null
+        });
     }
 }));
 module.exports = router ;

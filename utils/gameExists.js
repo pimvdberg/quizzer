@@ -1,15 +1,15 @@
 let games = require ("../schema/games.js").model;
 
 let gameExists = async (password, score) => {
-	await games.findOne ({_id: password}, (err, result) => {
-		if (!result) {
+	const game = await games.findOne ({_id: password});
+	console.log(game);
+		if (!game) {
 			throw "Game does not exist";
 		}
-		if (result.closed && !score) {
+		if (game.closed && !score) {
 			throw "Game is closed and cannot be reopened";
 		}
-		return result;
-	});
+		return game;
 };
 
 module.exports = gameExists;
