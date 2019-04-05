@@ -1,0 +1,21 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "cors": "^2.8.4",
+    "express": "^4.16.2",
+    "express-async-handler": "^1.1.4",
+    "mongoose": "^4.12.4",
+    "mongoose-simple-random": "^0.4.1",
+    "randomstring": "^1.1.5",
+    "socket.io": "^2.0.4",
+    "superagent": "^3.8.0"
+  }
+}
